@@ -35,9 +35,9 @@
                 <artifactId>tomcat7-maven-plugin</artifactId>
                 <version>2.2</version>
                 <configuration>
-                    <url>http://localhost:8080/manager/text</url>
+                    <url>http://194.67.90.94:8080/manager/text</url>
                     <username>admin</username>
-                    <password>admin</password>
+                    <password>ilmira_complex_admin_password_$1982</password>
                     <path>/servlet-app</path>
                 </configuration>
             </plugin>
