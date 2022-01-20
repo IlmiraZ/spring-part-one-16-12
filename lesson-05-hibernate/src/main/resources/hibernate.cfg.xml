@@ -17,5 +17,9 @@
         <property name="hibernate.format_sql">true</property>
 
         <mapping class="ru.ilmira.entity.Product"/>
+        <mapping class="ru.ilmira.entity.Client"/>
+        <mapping class="ru.ilmira.entity.Order"/>
+        <mapping class="ru.ilmira.entity.OrderItem"/>
+        <mapping class="ru.ilmira.entity.User"/>
     </session-factory>
 </hibernate-configuration>

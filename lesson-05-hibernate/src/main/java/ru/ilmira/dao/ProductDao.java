@@ -14,5 +14,4 @@ public interface ProductDao {
     void deleteById(long id);
 
     void save(Product product);
-
 }

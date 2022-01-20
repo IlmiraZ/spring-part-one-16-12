@@ -2,16 +2,12 @@ package ru.ilmira.dao;
 
 import ru.ilmira.entity.Product;
 
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Consumer;
-import java.util.function.Function;
 
 
-public class ProductDaoImpl implements ProductDao {
-
+public class ProductDaoImpl implements ProductDao, Util {
 
     private final EntityManagerFactory emFactory;
 
@@ -21,14 +17,14 @@ public class ProductDaoImpl implements ProductDao {
 
     @Override
     public Optional<Product> findById(Long id) {
-        return executeForEntityManager(
+        return executeForEntityManager(emFactory,
                 em -> Optional.ofNullable(em.find(Product.class, id))
         );
     }
 
     @Override
     public List<Product> findAll() {
-        return executeForEntityManager(
+        return executeForEntityManager(emFactory,
                 em -> em.createQuery("from Product p", Product.class)
                         .getResultList()
         );
@@ -36,7 +32,7 @@ public class ProductDaoImpl implements ProductDao {
 
     @Override
     public void save(Product product) {
-        executeInTransaction(em -> {
+        executeInTransaction(emFactory, em -> {
             if (product.getId() == null) {
                 em.persist(product);
             } else {
@@ -47,36 +43,10 @@ public class ProductDaoImpl implements ProductDao {
 
     @Override
     public void deleteById(long id) {
-        executeInTransaction(
+        executeInTransaction(emFactory,
                 em -> em.createQuery("delete from Product where id = :id")
                         .setParameter("id", id)
                         .executeUpdate()
         );
-    }
-
-    private <T> T executeForEntityManager(Function<EntityManager, T> function) {
-        EntityManager em = emFactory.createEntityManager();
-        try {
-            return function.apply(em);
-        } finally {
-            if (em != null) {
-                em.close();
-            }
-        }
-    }
-
-    private void executeInTransaction(Consumer<EntityManager> consumer) {
-        EntityManager entityManager = emFactory.createEntityManager();
-        try {
-            entityManager.getTransaction().begin();
-            consumer.accept(entityManager);
-            entityManager.getTransaction().commit();
-        } catch (Exception e) {
-            entityManager.getTransaction().rollback();
-        } finally {
-            if (entityManager != null) {
-                entityManager.close();
-            }
-        }
     }
 }
