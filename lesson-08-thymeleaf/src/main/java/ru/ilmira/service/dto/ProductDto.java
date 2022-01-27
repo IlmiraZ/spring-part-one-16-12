@@ -1,50 +1,37 @@
-package ru.ilmira.persist;
+package ru.ilmira.service.dto;
 
-
-import javax.persistence.*;
-import javax.validation.constraints.DecimalMin;
-import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
-@Entity
-@Table(name = "products")
-public class Product {
+public class ProductDto {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotBlank
-    @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "description")
+    @NotBlank
     private String description;
 
     @NotNull
-    @DecimalMin(value = "0.0", inclusive = false)
-    @Digits(integer = 6, fraction = 2)
-    @Column(name = "price")
     private BigDecimal price;
 
-    @ManyToOne
-    private Category category;
+    private Long categoryId;
 
-    public Product() {
+    private String categoryName;
+
+    public ProductDto() {
+
     }
 
-    public Product(Long id, String name, String description, BigDecimal price, Category category) {
+    public ProductDto(Long id, String name, String description, BigDecimal price, Long categoryId, String categoryName) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.price = price;
-        this.category = category;
-    }
-
-    public String getDescription() {
-        return description;
+        this.categoryId = categoryId;
+        this.categoryName = categoryName;
     }
 
     public Long getId() {
@@ -63,6 +50,10 @@ public class Product {
         this.name = name;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
     public void setDescription(String description) {
         this.description = description;
     }
@@ -75,11 +66,19 @@ public class Product {
         this.price = price;
     }
 
-    public Category getCategory() {
-        return category;
+    public Long getCategoryId() {
+        return categoryId;
     }
 
-    public void setCategory(Category category) {
-        this.category = category;
+    public void setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
     }
 }
