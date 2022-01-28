@@ -1,0 +1,26 @@
+GET http://localhost:8083/mvc-app/api/v1/category
+###
+
+GET http://localhost:8083/mvc-app/api/v1/category/1
+
+###
+
+POST http://localhost:8083/mvc-app/api/v1/category
+Content-Type: application/json
+
+{
+  "name": "Laptop11"
+}
+
+###
+
+PUT http://localhost:8083/mvc-app/api/v1/category
+Content-Type: application/json
+
+{
+  "id": 6,
+  "name": "Laptop1222"
+}
+
+###
+DELETE http://localhost:8083/mvc-app/api/v1/product/6

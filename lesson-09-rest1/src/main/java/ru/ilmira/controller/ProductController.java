@@ -9,8 +9,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import ru.ilmira.persist.Category;
+import ru.ilmira.persist.CategoryRepository;
 import ru.ilmira.service.CategoryService;
 import ru.ilmira.service.ProductService;
+import ru.ilmira.service.dto.CategoryDto;
 import ru.ilmira.service.dto.ProductDto;
 
 import javax.validation.Valid;
@@ -23,12 +26,12 @@ public class ProductController {
     private static final Logger logger = LoggerFactory.getLogger(ProductController.class);
 
     private final ProductService productService;
-    private final CategoryService categoryService;
+    private final CategoryRepository categoryRepository;
 
     @Autowired
-    public ProductController(ProductService productService, CategoryService categoryService) {
+    public ProductController(ProductService productService, CategoryRepository categoryRepository) {
         this.productService = productService;
-        this.categoryService = categoryService;
+        this.categoryRepository = categoryRepository;
     }
 
     @GetMapping
@@ -64,14 +67,14 @@ public class ProductController {
     public String edit(@PathVariable("id") Long id, Model model) {
         model.addAttribute("product", productService.findById(id)
                 .orElseThrow(() -> new NotFoundException("Product not found")));
-        model.addAttribute("categories", categoryService.findAll());
+        model.addAttribute("categories", categoryRepository.findAll());
         return "product_form";
     }
 
     @GetMapping("/new")
     public String create(Model model) {
         model.addAttribute("product", new ProductDto());
-        model.addAttribute("categories", categoryService.findAll());
+        model.addAttribute("categories", new CategoryDto());
         return "product_form";
     }
 
