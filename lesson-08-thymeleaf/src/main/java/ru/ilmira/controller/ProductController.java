@@ -3,19 +3,17 @@ package ru.ilmira.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import ru.ilmira.persist.Product;
-import ru.ilmira.persist.ProductRepository;
-import ru.ilmira.persist.ProductSpecification;
+import ru.ilmira.service.CategoryService;
+import ru.ilmira.service.ProductService;
+import ru.ilmira.service.dto.ProductDto;
 
 import javax.validation.Valid;
-import java.math.BigDecimal;
-import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -24,62 +22,71 @@ public class ProductController {
 
     private static final Logger logger = LoggerFactory.getLogger(ProductController.class);
 
-    private final ProductRepository productRepository;
+    private final ProductService productService;
+    private final CategoryService categoryService;
 
     @Autowired
-    public ProductController(ProductRepository productRepository) {
-        this.productRepository = productRepository;
+    public ProductController(ProductService productService, CategoryService categoryService) {
+        this.productService = productService;
+        this.categoryService = categoryService;
     }
 
     @GetMapping
     public String listPage(Model model,
                            @RequestParam("nameFilter") Optional<String> nameFilter,
                            @RequestParam("minPriceFilter") Optional<String> minPriceFilter,
-                           @RequestParam("maxPriceFilter") Optional<String> maxPriceFilter
-    ) {
+                           @RequestParam("maxPriceFilter") Optional<String> maxPriceFilter,
+                           @RequestParam("page") Optional<Integer> page,
+                           @RequestParam("size") Optional<Integer> size,
+                           @RequestParam("sort") Optional<String> sort,
+                           @RequestParam("dir") Optional<String> dir) {
+
         logger.info("Product filter with name pattern {}", nameFilter.orElse(null));
+        logger.info("Product filter with minPriceFilter pattern {}", minPriceFilter.orElse(null));
+        logger.info("Product filter with maxPriceFilter pattern {}", maxPriceFilter.orElse(null));
 
-        Specification<Product> spec = Specification.where(null);
-        if (nameFilter.isPresent() && !nameFilter.get().isBlank()) {
-            spec = spec.and(ProductSpecification.nameLike(nameFilter.get()));
-        }
-        if (minPriceFilter.isPresent() && !minPriceFilter.get().isBlank()) {
-            spec = spec.and(ProductSpecification.minPriceFilter(new BigDecimal(minPriceFilter.get())));
-        }
-        if (maxPriceFilter.isPresent() && !maxPriceFilter.get().isBlank()) {
-            spec = spec.and(ProductSpecification.maxPriceFilter(new BigDecimal(maxPriceFilter.get())));
-        }
-        List<Product> products = productRepository.findAll(spec);
+        String sortField = sort.filter(s -> !s.isBlank()).orElse("id");
+        boolean sortDir = dir.orElse("").equalsIgnoreCase(Sort.Direction.ASC.name());
+        Sort sortObj = sortDir ? Sort.by(sortField).ascending() : Sort.by(sortField).descending();
 
-        model.addAttribute("products", products);
+        model.addAttribute("products", productService.findAll(
+                nameFilter,
+                minPriceFilter,
+                maxPriceFilter,
+                page.orElse(1) - 1,
+                size.orElse(5),
+                sortObj
+        ));
         return "product";
     }
 
     @GetMapping("/{id}")
     public String edit(@PathVariable("id") Long id, Model model) {
-        model.addAttribute("product", productRepository.findById(id)
+        model.addAttribute("product", productService.findById(id)
                 .orElseThrow(() -> new NotFoundException("Product not found")));
+        model.addAttribute("categories", categoryService.findAll());
         return "product_form";
     }
 
     @GetMapping("/new")
     public String create(Model model) {
-        model.addAttribute("product", new Product());
+        model.addAttribute("product", new ProductDto());
+        model.addAttribute("categories", categoryService.findAll());
         return "product_form";
     }
 
     @PostMapping
-    public String save(@Valid Product product, BindingResult result) {
+    public String save(@Valid ProductDto productDto, BindingResult result) {
         if (result.hasErrors()) {
             return "product_form";
         }
-        productRepository.save(product);
+        productService.save(productDto);
         return "redirect:/product";
     }
 
-    @GetMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public String delete(@PathVariable("id") Long id) {
-        productRepository.deleteById(id);
+        productService.deleteById(id);
         return "redirect:/product";
     }
 
