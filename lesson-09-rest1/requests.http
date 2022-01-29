@@ -1,0 +1,37 @@
+GET http://localhost:8083/mvc-app/api/v1/product
+
+###
+
+GET http://localhost:8083/mvc-app/api/v1/product/25
+
+###
+
+POST http://localhost:8083/mvc-app/api/v1/product
+Content-Type: application/json
+
+{
+  "name": "Product 22",
+  "description": "Description for product 22",
+  "price": 51.80,
+  "categoryId": 3,
+  "categoryName": "Phone"
+}
+
+###
+
+PUT http://localhost:8083/mvc-app/api/v1/product
+Content-Type: application/json
+
+{
+  "id": 25,
+  "name": "Product 33344",
+  "description": "Description for product 33344",
+  "price": 51.80,
+  "categoryId": 3,
+  "categoryName": "Phone"
+}
+
+###
+DELETE http://localhost:8083/mvc-app/api/v1/product/25
+
+

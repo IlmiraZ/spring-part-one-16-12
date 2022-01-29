@@ -23,6 +23,7 @@
         <module>lesson-05-hibernate</module>
         <module>lesson-07-thymeleaf</module>
         <module>lesson-08-thymeleaf</module>
-    </modules>
+        <module>lesson-09-rest1</module>
+  </modules>
 
 </project>
