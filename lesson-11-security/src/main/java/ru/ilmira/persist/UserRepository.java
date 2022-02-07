@@ -13,6 +13,6 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
             "where u.login = :login")
     Optional<User> findByLogin(String login);
 
-    Optional<User> findByUsername(String username);
+
 }
 

@@ -10,8 +10,7 @@ public interface UserService {
     Page<UserDto> findAll(Optional<String> loginFilter,
                           Integer page,
                           Integer size,
-                          String sortField,
-                          Sort.Direction direction);
+                          Sort sort);
 
     Optional<UserDto> findById(long id);
 

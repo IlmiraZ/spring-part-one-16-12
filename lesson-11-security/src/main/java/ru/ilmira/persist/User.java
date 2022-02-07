@@ -27,6 +27,16 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
 
+    public User(Long id, String login, String password) {
+        this.id = id;
+        this.login = login;
+        this.password = password;
+    }
+
+    public User() {
+
+    }
+
     public void setId(Long id) {
         this.id = id;
     }
