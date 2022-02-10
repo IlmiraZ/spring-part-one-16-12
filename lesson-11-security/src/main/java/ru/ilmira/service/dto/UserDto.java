@@ -19,6 +19,10 @@ public class UserDto {
         this.password = password;
     }
 
+    public UserDto() {
+
+    }
+
     public Long getId() {
         return id;
     }
